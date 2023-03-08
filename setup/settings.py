@@ -92,7 +92,7 @@ CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173',
     'http://localhost:5173',
     'http://localhost:4000',
-    'https://scholl.vercel.app'
+    'https://expense-management-front.vercel.app/'
 ]
 
 # Password validation
