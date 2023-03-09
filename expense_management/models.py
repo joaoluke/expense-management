@@ -1,6 +1,12 @@
 from django.db import models
 
 # Create your models here.
+class Color(models.Model):
+    name = models.CharField(max_length=255, default="")
+    color = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 class Expense(models.Model):
     PAYMENT_STATUS_CHOICES = [
@@ -37,13 +43,6 @@ class Expense(models.Model):
         choices=MONTHS_CHOICES, default='1')
     payment_status = models.CharField(
         max_length=10, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
-
-    def __str__(self):
-        return self.name
-
-class Column(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    column_type = models.CharField(max_length=10, choices=[("to_pay", "A Pagar"), ("paid", "Pago")], default="to_pay")
 
     def __str__(self):
         return self.name

@@ -1,14 +1,14 @@
 from django.contrib import admin
-from django.urls import path
-from expense_management.views import ExpenseListView, ExpenseCreateView
+from django.urls import path, include
+from expense_management.views import ExpenseListView, ExpenseListAPIView, ColorListView
 from rest_framework import routers
 
 router = routers.DefaultRouter()
-router.register('students', ExpenseListView, basename='Students')
+router.register('colors', ColorListView, basename='Color')
+router.register('expenses-list', ExpenseListView, basename='Expense')
 
 urlpatterns = [
-    path('expenses/', ExpenseListView.as_view()),
-    path('expenses/create/', ExpenseCreateView.as_view()),
-    path('expense/<int:pk>/create/', ExpenseCreateView.as_view()),
     path('admin/', admin.site.urls),
+    path('', include(router.urls)),
+    path('expenses/', ExpenseListAPIView.as_view()),
 ]

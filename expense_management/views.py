@@ -1,20 +1,23 @@
-from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics, viewsets
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.response import Response
 
-from expense_management.models import Expense
-from expense_management.serializers import ExpenseSerializer
+from expense_management.models import Expense, Color
+from expense_management.serializers import ExpenseSerializer, ColorSerializer
 from django.db.models import Sum
 
 
 # Create your views here.
-class ExpenseCreateView(generics.CreateAPIView):
+class ColorListView(viewsets.ModelViewSet):
+    queryset = Color.objects.all()
+    serializer_class = ColorSerializer
+
+class ExpenseListView(viewsets.ModelViewSet):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
 
-class ExpenseListView(APIView):
+class ExpenseListAPIView(APIView):
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
 
