@@ -1,5 +1,5 @@
 from django.contrib import admin
-from expense_management.models import Expense, Color
+from expense_management.models import Expense, Category
 # Register your models here.
 admin.site.register(Expense)
-admin.site.register(Color)
+admin.site.register(Category)

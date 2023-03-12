@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h1>Excluir despesa</h1>
+<p>Tem certeza de que deseja excluir a despesa "{{ object.description }}"?</p>
+<form method="post">
+    {% csrf_token %}
+    <button type="submit">Sim, excluir</button>
+    <a href="{% url 'expense-list' %}">Cancelar</a>
+</form>
+{% endblock %}

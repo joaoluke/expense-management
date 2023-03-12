@@ -26,7 +26,12 @@ SECRET_KEY = 'django-insecure-kg4g-hh!4*qn*u!m_(!&uw65+2tc%rn)l(amj#4usx*9t^_p7w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'expense-management.herokuapp.com']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1',
+                 'http://localhost:4000', 'expense-management.herokuapp.com']
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:4000']
+
+
 
 
 # Application definition
@@ -52,6 +57,14 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'corsheaders.middleware.CorsMiddleware',
 ]
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
+
+LOGIN_REDIRECT_URL = '/'
+LOGOUT_REDIRECT_URL = '/login'
+LOGIN_URL = '/login'
 
 ROOT_URLCONF = 'setup.urls'
 

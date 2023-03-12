@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from expense_management.models import Expense, Color
+from expense_management.models import Expense, Category
 
 class ExpenseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,7 +10,7 @@ class ExpenseByMonthSerializer(serializers.Serializer):
     paid = ExpenseSerializer(many=True)
     to_pay = ExpenseSerializer(many=True)
 
-class ColorSerializer(serializers.ModelSerializer):
+class CategorySerializer(serializers.ModelSerializer):
     class Meta:
-        model = Color
+        model = Category
         fields = '__all__'
