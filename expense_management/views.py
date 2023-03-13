@@ -1,5 +1,5 @@
 from django.http import HttpResponse
-from rest_framework import viewsets, filters
+from rest_framework import viewsets, filters, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -10,6 +10,7 @@ from django.db.models import Sum
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
 
 from expense_management.models import Expense, Category
 from expense_management.serializers import ExpenseSerializer, CategorySerializer, MyTokenObtainPairSerializer
@@ -20,6 +21,19 @@ class MyObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
 
+class LogoutView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def post(self, request):
+        print(request.data, "<<<<<<<")
+        try:
+            refresh_token = request.data["refresh_token"]
+            token = RefreshToken(refresh_token)
+            token.blacklist()
+
+            return Response(status=status.HTTP_205_RESET_CONTENT)
+        except Exception as e:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
 
 class CategoryListView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)

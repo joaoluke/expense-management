@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import path, include
-from expense_management.views import ExpenseListView, ExpenseListAPIView, CategoryListView, MyObtainTokenPairView
+from expense_management.views import ExpenseListView, ExpenseListAPIView, CategoryListView, MyObtainTokenPairView, LogoutView
 from rest_framework_simplejwt.views import TokenRefreshView
 from django.contrib.auth import views as auth_views
 from rest_framework import routers
@@ -15,5 +15,5 @@ urlpatterns = [
     path('expenses/', ExpenseListAPIView.as_view()),
     path('login/', MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
     path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('logout/', auth_views.LogoutView.as_view(), name='logout')
+    path('logout/', LogoutView.as_view(), name='logout')
 ]

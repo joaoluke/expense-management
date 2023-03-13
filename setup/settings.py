@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'expense_management',
     'rest_framework',
     'corsheaders',
+    'rest_framework_simplejwt.token_blacklist',
 ]
 
 REST_FRAMEWORK = {
