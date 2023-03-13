@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 
 # Create your models here.
 class Category(models.Model):
@@ -43,6 +44,12 @@ class Expense(models.Model):
         choices=MONTHS_CHOICES, default='1')
     payment_status = models.CharField(
         max_length=10, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name='expenses',
+        default=1,
+    )
 
     def __str__(self):
         return self.name

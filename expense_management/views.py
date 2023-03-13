@@ -14,12 +14,24 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 from expense_management.models import Expense, Category
 from expense_management.serializers import ExpenseSerializer, CategorySerializer, MyTokenObtainPairSerializer
-from expense_management.forms import LoginForm
+
+
+class UserProfileView(APIView):
+    permission_classes = (IsAuthenticated,)
+
+    def get(self, request):
+        user = request.user
+        return Response({
+            'id': user.id,
+            'username': user.username,
+            'email': user.email
+        })
 
 
 class MyObtainTokenPairView(TokenObtainPairView):
     permission_classes = (AllowAny,)
     serializer_class = MyTokenObtainPairSerializer
+
 
 class LogoutView(APIView):
     permission_classes = (IsAuthenticated,)
@@ -35,6 +47,7 @@ class LogoutView(APIView):
         except Exception as e:
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+
 class CategoryListView(viewsets.ModelViewSet):
     permission_classes = (IsAuthenticated,)
     queryset = Category.objects.all()
@@ -44,27 +57,28 @@ class CategoryListView(viewsets.ModelViewSet):
 
 
 class ExpenseListView(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
     filter_backends = [DjangoFilterBackend,
                        filters.OrderingFilter, filters.SearchFilter]
 
-
-class ExpenseDeleteView(DeleteView):
-    model = Expense
-    success_url = reverse_lazy('expense-list')
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class ExpenseListAPIView(APIView):
+    permission_classes = (IsAuthenticated,)
     queryset = Expense.objects.all()
     serializer_class = ExpenseSerializer
 
     def get(self, request, format=None):
         current_month = request.query_params.get('month')
+        user_id = request.user.id
         expenses_paid = Expense.objects.filter(
-            month_reference=current_month, column='PAID')
+            user=user_id, month_reference=current_month, column='PAID')
         expenses_to_pay = Expense.objects.filter(
-            month_reference=current_month, column='TO_PAY')
+            user=user_id, month_reference=current_month, column='TO_PAY')
         serializer_paid = ExpenseSerializer(expenses_paid, many=True)
         serializer_to_pay = ExpenseSerializer(expenses_to_pay, many=True)
         total_paid = expenses_paid.aggregate(Sum('value'))['value__sum']
