@@ -1,28 +1,28 @@
+from django.http import HttpResponse
 from rest_framework import viewsets, filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
 from django.urls import reverse_lazy
 from django.views.generic import DeleteView
-
+from django.db.models import Sum
+from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.permissions import AllowAny
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 from expense_management.models import Expense, Category
-from expense_management.serializers import ExpenseSerializer, CategorySerializer
-from django.db.models import Sum
-from django.contrib.auth.views import LoginView
+from expense_management.serializers import ExpenseSerializer, CategorySerializer, MyTokenObtainPairSerializer
 from expense_management.forms import LoginForm
-from django.views.decorators.csrf import csrf_exempt
-from django.utils.decorators import method_decorator
 
 
-# Create your views here.
-@method_decorator(csrf_exempt, name='dispatch')
-class CustomLoginView(LoginView):
-    form_class = LoginForm
-    template_name = 'login.html'
+class MyObtainTokenPairView(TokenObtainPairView):
+    permission_classes = (AllowAny,)
+    serializer_class = MyTokenObtainPairSerializer
 
 
 class CategoryListView(viewsets.ModelViewSet):
+    permission_classes = (IsAuthenticated,)
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
     filter_backends = [DjangoFilterBackend,
@@ -34,7 +34,8 @@ class ExpenseListView(viewsets.ModelViewSet):
     serializer_class = ExpenseSerializer
     filter_backends = [DjangoFilterBackend,
                        filters.OrderingFilter, filters.SearchFilter]
-    
+
+
 class ExpenseDeleteView(DeleteView):
     model = Expense
     success_url = reverse_lazy('expense-list')

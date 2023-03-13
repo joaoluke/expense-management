@@ -1,6 +1,8 @@
 from django.contrib import admin
 from django.urls import path, include
-from expense_management.views import ExpenseListView, ExpenseListAPIView, CategoryListView, CustomLoginView, ExpenseDeleteView
+from expense_management.views import ExpenseListView, ExpenseListAPIView, CategoryListView, MyObtainTokenPairView
+from rest_framework_simplejwt.views import TokenRefreshView
+from django.contrib.auth import views as auth_views
 from rest_framework import routers
 
 router = routers.DefaultRouter()
@@ -11,8 +13,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include(router.urls)),
     path('expenses/', ExpenseListAPIView.as_view()),
-    path('login/', CustomLoginView.as_view()),
-    path('expenses-list/<int:pk>/delete/',
-         ExpenseDeleteView.as_view(), name='expense-delete'),
-
+    path('login/', MyObtainTokenPairView.as_view(), name='token_obtain_pair'),
+    path('login/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout')
 ]

@@ -26,13 +26,6 @@ SECRET_KEY = 'django-insecure-kg4g-hh!4*qn*u!m_(!&uw65+2tc%rn)l(amj#4usx*9t^_p7w
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1',
-                 'http://localhost:4000', 'expense-management.herokuapp.com']
-
-CSRF_TRUSTED_ORIGINS = ['http://localhost:4000']
-
-
-
 
 # Application definition
 
@@ -45,7 +38,14 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'expense_management',
     'rest_framework',
+    'corsheaders',
 ]
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    )
+}
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -71,7 +71,7 @@ ROOT_URLCONF = 'setup.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -101,11 +101,22 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 
+ALLOWED_HOSTS = ['*']
+CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_HTTPONLY = True
+CORS_ORIGIN_ALLOW_ALL = False
+CSRF_USE_SESSIONS = True
+CORS_ALLOW_CREDENTIALS = True
+
+
+CSRF_TRUSTED_ORIGINS = ['http://localhost:4000',
+                        'https://expense-management-front.vercel.app']
+
 CORS_ALLOWED_ORIGINS = [
     'http://127.0.0.1:5173',
     'http://localhost:5173',
     'http://localhost:4000',
-    'https://expense-management-front.vercel.app/'
+    'https://expense-management-front.vercel.app'
 ]
 
 # Password validation
