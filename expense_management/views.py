@@ -1,19 +1,51 @@
-from django.http import HttpResponse
 from rest_framework import viewsets, filters, status
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from django_filters.rest_framework import DjangoFilterBackend
-from django.urls import reverse_lazy
-from django.views.generic import DeleteView
 from django.db.models import Sum
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.authtoken.models import Token
+from google.oauth2 import id_token
+from google.auth.transport import requests
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.contrib.auth.models import User
+from django.conf import settings
 
 from expense_management.models import Expense, Category
 from expense_management.serializers import ExpenseSerializer, CategorySerializer, MyTokenObtainPairSerializer
+
+
+class GoogleLoginAPIView(APIView):
+    def post(self, request, format=None):
+        token = request.data.get('token', None)
+        if not token:
+            return Response({'error': 'Token missing'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            idinfo = id_token.verify_oauth2_token(
+                token, requests.Request(), settings.GOOGLE_CLIENT_ID)
+            if idinfo['iss'] not in ['accounts.google.com', 'https://accounts.google.com']:
+                raise ValueError('Wrong issuer.')
+        except ValueError as e:
+            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
+        # Aqui você pode verificar se o usuário já existe no banco de dados, e criar um novo usuário se necessário
+        try:
+            user = User.objects.get(email=idinfo['email'])
+        except User.DoesNotExist:
+            # O usuário não existe, então vamos criar um novo
+            user = User.objects.create_user(idinfo['email'], idinfo['email'])
+            user.first_name = idinfo['given_name']
+            user.last_name = idinfo['family_name']
+            user.save()
+
+        refresh = RefreshToken.for_user(user)
+        access_token = str(refresh.access_token)
+
+        return Response({'access_token': access_token})
 
 
 class UserProfileView(APIView):

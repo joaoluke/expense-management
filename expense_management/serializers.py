@@ -1,7 +1,15 @@
 from rest_framework import serializers
 from expense_management.models import Expense, Category
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
+from dj_rest_auth.serializers import LoginSerializer
+from rest_framework import serializers
+from rest_framework.authtoken.models import Token
 
+
+class CustomLoginSerializer(LoginSerializer):
+    def get_token(self, user):
+        token, created = Token.objects.get_or_create(user=user)
+        return token.key
 
 
 class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
