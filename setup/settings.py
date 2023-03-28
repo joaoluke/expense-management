@@ -130,7 +130,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 MEDIA_URL = '/media/'
 
-GOOGLE_CLIENT_ID = "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"
+SITE_ID = 1
 
 ALLOWED_HOSTS = ['*']
 CSRF_COOKIE_SECURE = True

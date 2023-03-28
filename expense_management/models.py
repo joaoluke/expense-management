@@ -2,12 +2,15 @@ from django.db import models
 from django.conf import settings
 
 # Create your models here.
+
+
 class Category(models.Model):
     name = models.CharField(max_length=255, default="")
     color = models.CharField(max_length=255)
 
     def __str__(self):
         return self.name
+
 
 class Expense(models.Model):
     PAYMENT_STATUS_CHOICES = [
@@ -39,9 +42,10 @@ class Expense(models.Model):
     invoice_due_date = models.DateField()
     category = models.CharField(max_length=255)
     color = models.CharField(max_length=255)
-    column = models.CharField(max_length=20, choices=COLUMN_CHOICES, default=COLUMN_CHOICES[0][0])
+    column = models.CharField(
+        max_length=20, choices=COLUMN_CHOICES, default=COLUMN_CHOICES[0][0])
     month_reference = models.PositiveSmallIntegerField(
-        choices=MONTHS_CHOICES, default='1')
+        choices=MONTHS_CHOICES, blank=True, null=True)
     payment_status = models.CharField(
         max_length=10, choices=PAYMENT_STATUS_CHOICES, default='PENDING')
     user = models.ForeignKey(
